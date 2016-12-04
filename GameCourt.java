@@ -34,7 +34,6 @@ public class GameCourt extends JPanel implements MouseMotionListener {
     private Rectangle paddle_left;
     private Rectangle paddle_right;
     private Circle snitch; // the Golden Snitch, bounces
-    private Poison poison; // the Poison Mushroom, doesn't move
     private JLabel status; // Current status text (i.e. Running...)
 
 	public GameCourt(JLabel status) {
@@ -78,10 +77,11 @@ public class GameCourt extends JPanel implements MouseMotionListener {
 	public void reset() {
 
         paddle_left = new Rectangle(0, 0, COURT_WIDTH, COURT_HEIGHT);
+
+
         paddle_right = new Rectangle(this.getWidth() - Rectangle.SIZE_X
                 , 0, COURT_WIDTH, COURT_HEIGHT); //Have to remove the width
         // of the Rectangle in order to keep it on the board.
-        poison = new Poison(COURT_WIDTH, COURT_HEIGHT);
 		snitch = new Circle(COURT_WIDTH, COURT_HEIGHT);
 
 		playing = true;
@@ -105,17 +105,8 @@ public class GameCourt extends JPanel implements MouseMotionListener {
 			// make the snitch bounce off walls...
 			snitch.bounce(snitch.hitWall());
 			// ...and the mushroom
-			snitch.bounce(snitch.hitObj(poison));
 
 			// check for the game end conditions
-            if (paddle_left.intersects(poison)) {
-                playing = false;
-				status.setText("You lose!");
-
-            } else if (paddle_left.intersects(snitch)) {
-                playing = false;
-				status.setText("You win!");
-			}
 
 			// update the display
 			repaint();
@@ -127,7 +118,6 @@ public class GameCourt extends JPanel implements MouseMotionListener {
 		super.paintComponent(g);
         paddle_left.draw(g);
         paddle_right.draw(g);
-        poison.draw(g);
 		snitch.draw(g);
 	}
 
