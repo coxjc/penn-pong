@@ -4,9 +4,9 @@
  * @version 2.0, Mar 2013
  */
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import javax.swing.*;
 
 
 /**
@@ -18,22 +18,20 @@ import javax.swing.*;
  * 
  */
 @SuppressWarnings("serial")
-public class GameCourt extends JPanel {
-
-	// the state of the game logic
-	private Square square; // the Black Square, keyboard control
-	private Circle snitch; // the Golden Snitch, bounces
-	private Poison poison; // the Poison Mushroom, doesn't move
-
-	public boolean playing = false; // whether the game is running
-	private JLabel status; // Current status text (i.e. Running...)
+public class GameCourt extends JPanel implements MouseMotionListener {
 
 	// Game constants
-	public static final int COURT_WIDTH = 300;
-	public static final int COURT_HEIGHT = 300;
+    public static final int COURT_WIDTH = 600;
+    public static final int COURT_HEIGHT = 300;
 	public static final int SQUARE_VELOCITY = 4;
 	// Update interval for timer, in milliseconds
 	public static final int INTERVAL = 35;
+    public boolean playing = false; // whether the game is running
+    // the state of the game logic
+    private Rectangle rectangle;
+    private Circle snitch; // the Golden Snitch, bounces
+    private Poison poison; // the Poison Mushroom, doesn't move
+    private JLabel status; // Current status text (i.e. Running...)
 
 	public GameCourt(JLabel status) {
 		// creates border around the court area, JComponent method
@@ -57,38 +55,48 @@ public class GameCourt extends JPanel {
 		// events will be handled by its key listener.
 		setFocusable(true);
 
-		// This key listener allows the square to move as long
-		// as an arrow key is pressed, by changing the square's
-		// velocity accordingly. (The tick method below actually
-		// moves the square.)
-		addKeyListener(new KeyAdapter() {
+        // This key listener allows the rectangle to move as long
+        // as an arrow key is pressed, by changing the rectangle's
+        // velocity accordingly. (The tick method below actually
+        // moves the rectangle.)
+        addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
 				if (e.getKeyCode() == KeyEvent.VK_LEFT)
-					square.v_x = -SQUARE_VELOCITY;
-				else if (e.getKeyCode() == KeyEvent.VK_RIGHT)
-					square.v_x = SQUARE_VELOCITY;
-				else if (e.getKeyCode() == KeyEvent.VK_DOWN)
-					square.v_y = SQUARE_VELOCITY;
-				else if (e.getKeyCode() == KeyEvent.VK_UP)
-					square.v_y = -SQUARE_VELOCITY;
-			}
+                    rectangle.v_x = -SQUARE_VELOCITY;
+                else if (e.getKeyCode() == KeyEvent.VK_RIGHT)
+                    rectangle.v_x = SQUARE_VELOCITY;
+                else if (e.getKeyCode() == KeyEvent.VK_DOWN)
+                    rectangle.v_y = SQUARE_VELOCITY;
+                else if (e.getKeyCode() == KeyEvent.VK_UP)
+                    rectangle.v_y = -SQUARE_VELOCITY;
+            }
 
 			public void keyReleased(KeyEvent e) {
-				square.v_x = 0;
-				square.v_y = 0;
-			}
+                rectangle.v_x = 0;
+                rectangle.v_y = 0;
+            }
 		});
 
 		this.status = status;
-	}
+
+        this.addMouseMotionListener(this);
+
+    }
+
+    public void mouseMoved(MouseEvent e) {
+        this.rectangle.setPos_y(e.getY());
+    }
+
+    public void mouseDragged(MouseEvent e) {
+    }
 
 	/**
 	 * (Re-)set the game to its initial state.
 	 */
 	public void reset() {
 
-		square = new Square(COURT_WIDTH, COURT_HEIGHT);
-		poison = new Poison(COURT_WIDTH, COURT_HEIGHT);
+        rectangle = new Rectangle(COURT_WIDTH, COURT_HEIGHT);
+        poison = new Poison(COURT_WIDTH, COURT_HEIGHT);
 		snitch = new Circle(COURT_WIDTH, COURT_HEIGHT);
 
 		playing = true;
@@ -104,10 +112,10 @@ public class GameCourt extends JPanel {
 	 */
 	void tick() {
 		if (playing) {
-			// advance the square and snitch in their
-			// current direction.
-			square.move();
-			snitch.move();
+            // advance the rectangle and snitch in their
+            // current direction.
+            rectangle.move();
+            snitch.move();
 
 			// make the snitch bounce off walls...
 			snitch.bounce(snitch.hitWall());
@@ -115,12 +123,12 @@ public class GameCourt extends JPanel {
 			snitch.bounce(snitch.hitObj(poison));
 
 			// check for the game end conditions
-			if (square.intersects(poison)) {
-				playing = false;
+            if (rectangle.intersects(poison)) {
+                playing = false;
 				status.setText("You lose!");
 
-			} else if (square.intersects(snitch)) {
-				playing = false;
+            } else if (rectangle.intersects(snitch)) {
+                playing = false;
 				status.setText("You win!");
 			}
 
@@ -132,8 +140,8 @@ public class GameCourt extends JPanel {
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		square.draw(g);
-		poison.draw(g);
+        rectangle.draw(g);
+        poison.draw(g);
 		snitch.draw(g);
 	}
 
