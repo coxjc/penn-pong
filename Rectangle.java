@@ -18,7 +18,7 @@ public class Rectangle extends GameObj {
 
     @Override
     public void draw(Graphics g) {
-        g.setColor(Color.BLACK);
+        g.setColor(Color.ORANGE);
         g.fillRect(pos_x, pos_y, width, height);
     }
 

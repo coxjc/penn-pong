@@ -26,7 +26,6 @@ public class GameCourt extends JPanel implements MouseMotionListener {
 	// Game constants
     public static final int COURT_WIDTH = 600;
     public static final int COURT_HEIGHT = 300;
-	public static final int SQUARE_VELOCITY = 4;
 	// Update interval for timer, in milliseconds
 	public static final int INTERVAL = 35;
     public boolean playing = false; // whether the game is running
@@ -38,7 +37,7 @@ public class GameCourt extends JPanel implements MouseMotionListener {
 
 	public GameCourt(JLabel status) {
 		// creates border around the court area, JComponent method
-		setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        setBorder(BorderFactory.createLineBorder(Color.GREEN));
 
 		// The timer is an object which triggers an action periodically
 		// with the given INTERVAL. One registers an ActionListener with
@@ -105,6 +104,9 @@ public class GameCourt extends JPanel implements MouseMotionListener {
 			// make the snitch bounce off walls...
 			snitch.bounce(snitch.hitWall());
 			// ...and the mushroom
+
+            snitch.bounce(snitch.hitObj(this.paddle_left));
+            snitch.bounce(snitch.hitObj(this.paddle_right));
 
 			// check for the game end conditions
 
