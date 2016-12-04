@@ -6,7 +6,10 @@
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 
 
 /**
@@ -28,7 +31,8 @@ public class GameCourt extends JPanel implements MouseMotionListener {
 	public static final int INTERVAL = 35;
     public boolean playing = false; // whether the game is running
     // the state of the game logic
-    private Rectangle rectangle;
+    private Rectangle paddle_left;
+    private Rectangle paddle_right;
     private Circle snitch; // the Golden Snitch, bounces
     private Poison poison; // the Poison Mushroom, doesn't move
     private JLabel status; // Current status text (i.e. Running...)
@@ -55,28 +59,6 @@ public class GameCourt extends JPanel implements MouseMotionListener {
 		// events will be handled by its key listener.
 		setFocusable(true);
 
-        // This key listener allows the rectangle to move as long
-        // as an arrow key is pressed, by changing the rectangle's
-        // velocity accordingly. (The tick method below actually
-        // moves the rectangle.)
-        addKeyListener(new KeyAdapter() {
-			public void keyPressed(KeyEvent e) {
-				if (e.getKeyCode() == KeyEvent.VK_LEFT)
-                    rectangle.v_x = -SQUARE_VELOCITY;
-                else if (e.getKeyCode() == KeyEvent.VK_RIGHT)
-                    rectangle.v_x = SQUARE_VELOCITY;
-                else if (e.getKeyCode() == KeyEvent.VK_DOWN)
-                    rectangle.v_y = SQUARE_VELOCITY;
-                else if (e.getKeyCode() == KeyEvent.VK_UP)
-                    rectangle.v_y = -SQUARE_VELOCITY;
-            }
-
-			public void keyReleased(KeyEvent e) {
-                rectangle.v_x = 0;
-                rectangle.v_y = 0;
-            }
-		});
-
 		this.status = status;
 
         this.addMouseMotionListener(this);
@@ -84,7 +66,7 @@ public class GameCourt extends JPanel implements MouseMotionListener {
     }
 
     public void mouseMoved(MouseEvent e) {
-        this.rectangle.setPos_y(e.getY());
+        this.paddle_left.setPos_y(e.getY());
     }
 
     public void mouseDragged(MouseEvent e) {
@@ -95,7 +77,10 @@ public class GameCourt extends JPanel implements MouseMotionListener {
 	 */
 	public void reset() {
 
-        rectangle = new Rectangle(COURT_WIDTH, COURT_HEIGHT);
+        paddle_left = new Rectangle(0, 0, COURT_WIDTH, COURT_HEIGHT);
+        paddle_right = new Rectangle(this.getWidth() - Rectangle.SIZE_X
+                , 0, COURT_WIDTH, COURT_HEIGHT); //Have to remove the width
+        // of the Rectangle in order to keep it on the board.
         poison = new Poison(COURT_WIDTH, COURT_HEIGHT);
 		snitch = new Circle(COURT_WIDTH, COURT_HEIGHT);
 
@@ -112,9 +97,9 @@ public class GameCourt extends JPanel implements MouseMotionListener {
 	 */
 	void tick() {
 		if (playing) {
-            // advance the rectangle and snitch in their
+            // advance the paddle_left and snitch in their
             // current direction.
-            rectangle.move();
+            paddle_left.move();
             snitch.move();
 
 			// make the snitch bounce off walls...
@@ -123,11 +108,11 @@ public class GameCourt extends JPanel implements MouseMotionListener {
 			snitch.bounce(snitch.hitObj(poison));
 
 			// check for the game end conditions
-            if (rectangle.intersects(poison)) {
+            if (paddle_left.intersects(poison)) {
                 playing = false;
 				status.setText("You lose!");
 
-            } else if (rectangle.intersects(snitch)) {
+            } else if (paddle_left.intersects(snitch)) {
                 playing = false;
 				status.setText("You win!");
 			}
@@ -140,7 +125,8 @@ public class GameCourt extends JPanel implements MouseMotionListener {
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-        rectangle.draw(g);
+        paddle_left.draw(g);
+        paddle_right.draw(g);
         poison.draw(g);
 		snitch.draw(g);
 	}
