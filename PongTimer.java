@@ -1,7 +1,7 @@
 /**
  * Created by coxjc on 12/4/16.
  */
-public class Timer {
+public class PongTimer {
     private long startMS = 0L; //Current timestamp in MS
     private long finalMS = 0L; //Final timestamp in MS
     private long elapsedS = 0L; //SECONDS elapsed since start of timer
