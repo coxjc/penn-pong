@@ -34,6 +34,7 @@ public class GameCourt extends JPanel implements MouseMotionListener {
     private Rectangle paddle_right;
     private Circle snitch; // the Golden Snitch, bounces
     private JLabel status; // Current status text (i.e. Running...)
+    private PongTimer pongGameTimer;
 
 	public GameCourt(JLabel status) {
 		// creates border around the court area, JComponent method
@@ -88,7 +89,10 @@ public class GameCourt extends JPanel implements MouseMotionListener {
 
 		// Make sure that this component has the keyboard focus
 		requestFocusInWindow();
-	}
+
+        this.pongGameTimer = new PongTimer();
+        this.pongGameTimer.startTimer();
+    }
 
 	/**
 	 * This method is called every time the timer defined in the constructor
@@ -109,6 +113,10 @@ public class GameCourt extends JPanel implements MouseMotionListener {
             snitch.bounce(snitch.hitObj(this.paddle_right));
 
 			// check for the game end conditions
+            if (snitch.pos_x < 5) {
+                this.pongGameTimer.endTimer();
+                System.out.println(this.pongGameTimer.getElapsed());
+            }
 
 			// update the display
 			repaint();
