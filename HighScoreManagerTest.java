@@ -2,53 +2,38 @@ import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
 import org.junit.Test;
 
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.util.TreeMap;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 /**
  * Created by coxjc on 12/7/16.
  */
 public class HighScoreManagerTest {
 
-    private final String testScores = "/Users/coxjc/Google " +
-            "Drive/Penn/SemI/CIS120/Java/hw09/sampleScores.csv";
-
-    @Test
-    public void isValidFormatTests() {
-        /**
-         * Start failing tests
-         */
-        assertFalse("Null returns false",
-                HighScoreManager.isValidFormat(null));
-        assertFalse("Empty string returns false",
-                HighScoreManager.isValidFormat(""));
-        assertFalse("Correct text without comma returns false",
-                HighScoreManager.isValidFormat("User123"));
-        assertFalse("User without score returns false",
-                HighScoreManager.isValidFormat("User,"));
-        assertFalse("Score without user returns false",
-                HighScoreManager.isValidFormat(",1"));
-        assertFalse("Non-numerical score returns false",
-                HighScoreManager.isValidFormat("User,III"));
-        assertFalse("More than one comma returns false",
-                HighScoreManager.isValidFormat("Us,er,1"));
-        /**
-         * Start passing tests
-         */
-        assertTrue("String user name w/ numerical score returns true",
-                HighScoreManager.isValidFormat("User,1"));
-        assertTrue(HighScoreManager.isValidFormat("AABBCC,112233"));
-        assertTrue("Space around name or score returns true",
-                HighScoreManager.isValidFormat(" User1 , 1 "));
-    }
-
     @Test
     public void getHighScoresTests() {
         try {
-            CSVReader reader = new CSVReader(new FileReader(this.testScores));
-            assertEquals(HighScoreManager.getHighScores(reader).size(), 2);
+            //Generate two timestamps.. have to Thread.sleep to ensure they
+            // don't duplicate, because that'll screw up the key set.
+            String firstTs = HighScoreManager.getCurrentTimestampString();
+            Thread.sleep(10);
+            String secondTs = HighScoreManager.getCurrentTimestampString();
+            Thread.sleep(10);
+            //Generate test string using the generated timestamps
+            String testData = "user1,1," + firstTs + "\nuser2,2," + secondTs;
+            CSVReader reader = new CSVReader(new StringReader(testData));
+            //Get the TreeMap from the test data
+            TreeMap<String, ScoreRecord> highScoresTreeMap = HighScoreManager
+                    .getHighScores(reader);
+            assertEquals(highScoresTreeMap.size(), 2);
+            assertEquals(highScoresTreeMap.get(firstTs).getName(), "user1");
+            assertEquals(highScoresTreeMap.get(firstTs).getScore(), 1);
+            assertEquals(highScoresTreeMap.get(secondTs).getName(), "user2");
+            assertEquals(highScoresTreeMap.get(secondTs).getScore(), 2);
         } catch (Throwable e) {
             fail(e.getMessage());
         }
@@ -57,9 +42,29 @@ public class HighScoreManagerTest {
     @Test
     public void addHighScoreTests() {
         try {
-            CSVWriter writer = new CSVWriter(new FileWriter(this.testScores));
-            assertTrue(HighScoreManager.addHighScore(writer, "USER3, 8"));
-            CSVReader reader = new CSVReader(new FileReader(this.testScores));
+            //Generate two timestamps.. have to Thread.sleep to ensure they
+            // don't duplicate, because that'll screw up the key set.
+            String firstTs = HighScoreManager.getCurrentTimestampString();
+            Thread.sleep(10);
+            String secondTs = HighScoreManager.getCurrentTimestampString();
+            Thread.sleep(10);
+            //Generate test string using the generated timestamps
+            String testData = "user1,1," + firstTs + "\nuser2,2," + secondTs;
+            //Create CSVWriter using StringWriter
+            StringWriter stringWriter = new StringWriter();
+            CSVWriter writer = new CSVWriter(stringWriter, ',', CSVWriter
+                    .NO_QUOTE_CHARACTER);
+            //Add high score to the writer
+            HighScoreManager.addHighScore(writer, "USER3", 8);
+            CSVReader reader = new CSVReader(new StringReader(stringWriter.toString()));
+            //There should only be the USER3 record at this point
+            assertEquals(HighScoreManager.getHighScores(reader).size(), 1);
+            //Add the test data described earlier to the writer
+            stringWriter.append(testData);
+            //Create StringReader from the StringWriter
+            reader = new CSVReader(new StringReader(stringWriter.toString()));
+            // There should be the original USER3 as well as the two
+            // generated records
             assertEquals(HighScoreManager.getHighScores(reader).size(), 3);
         } catch (Throwable e) {
             fail(e.getMessage());

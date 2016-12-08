@@ -19,32 +19,17 @@ import java.util.TreeMap;
 
 public class HighScoreManager {
 
-    //Ensures that a line follows the following format
-    //  "USER'S NAME,NUMERICAL SCORE"
-    public static boolean isValidFormat(String line) {
-        String scorerName = "";
-        String scoreSecs = "";
-        try {
-            scorerName = line.substring(0, line.indexOf(',')).trim();
-            scoreSecs = line.substring(line.indexOf(',') + 1, line.length())
-                    .trim();
-        } catch (Throwable e) { //catch array out of bounds and whatnot
-            return false;
-        }
-        if (scorerName.length() < 1) { //ensures there is a name
-            return false;
-        } else if (!scoreSecs.matches("[0-9]+")) { //regex to match #s only
-            return false;
-        } else if (line.indexOf(',') != line.lastIndexOf(',')) {
-            return false; // if there is more than one comma in the line
-        }
-        return true;
+    public static String getCurrentTimestampString() {
+        return Long.toString(System.currentTimeMillis());
     }
 
-    public static boolean addHighScore(CSVWriter writer, String line) {
-        if (!isValidFormat(line)) return false;
-        String[] cols = line.split(",");
-        writer.writeNext(cols);
+    public static boolean
+    addHighScore(CSVWriter writer, String name, int score) {
+        if (writer == null || name == null || score < 0)
+            throw new IllegalArgumentException();
+        String[] colsFinal = {name, String.valueOf(score),
+                getCurrentTimestampString()};
+        writer.writeNext(colsFinal);
         try {
             writer.close();
             return true;
@@ -53,17 +38,20 @@ public class HighScoreManager {
         }
     }
 
-    public static TreeMap<Integer, String> getHighScores(CSVReader reader) {
+    public static TreeMap<String, ScoreRecord> getHighScores(CSVReader reader) {
+        if (reader == null) throw new IllegalArgumentException();
         String[] nextLine;
-        TreeMap<Integer, String> highScores = new TreeMap<>();
+        TreeMap<String, ScoreRecord> highScores = new TreeMap<>();
+        String name;
+        int score;
+        String timestamp;
         try {
             while ((nextLine = reader.readNext()) != null) {
-                if (isValidFormat(nextLine[0] + "," + nextLine[1])) {
-                    nextLine[0] = nextLine[0].trim();
-                    nextLine[1] = nextLine[1].trim();
-                    highScores.put(Integer.valueOf(nextLine[1]),
-                            nextLine[0]);
-                }
+                name = nextLine[0].trim();
+                score = Integer.valueOf(nextLine[1].trim());
+                timestamp = nextLine[2].trim();
+                highScores.put(timestamp,
+                        new ScoreRecord(name, score, timestamp));
             }
         } catch (Throwable e) {
             throw new IllegalArgumentException();
