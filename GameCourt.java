@@ -1,6 +1,7 @@
 /**
  * CIS 120 Game HW
  * (c) University of Pennsylvania
+ *
  * @version 2.0, Mar 2013
  */
 
@@ -14,20 +15,20 @@ import java.awt.event.MouseMotionListener;
 
 /**
  * GameCourt
- * 
+ *
  * This class holds the primary game logic for how different objects interact
  * with one another. Take time to understand how the timer interacts with the
  * different methods and how it repaints the GUI on every tick().
- * 
+ *
  */
 @SuppressWarnings("serial")
 public class GameCourt extends JPanel implements MouseMotionListener {
 
-	// Game constants
+    // Game constants
     public static final int COURT_WIDTH = 600;
     public static final int COURT_HEIGHT = 300;
-	// Update interval for timer, in milliseconds
-	public static final int INTERVAL = 35;
+    // Update interval for timer, in milliseconds
+    public static final int INTERVAL = 35;
     public boolean playing = false; // whether the game is running
     // the state of the game logic
     private Rectangle paddle_left;
@@ -36,29 +37,29 @@ public class GameCourt extends JPanel implements MouseMotionListener {
     private JLabel status; // Current status text (i.e. Running...)
     private PongTimer pongGameTimer;
 
-	public GameCourt(JLabel status) {
-		// creates border around the court area, JComponent method
+    public GameCourt(JLabel status) {
+        // creates border around the court area, JComponent method
         setBorder(BorderFactory.createLineBorder(Color.GREEN));
 
-		// The timer is an object which triggers an action periodically
-		// with the given INTERVAL. One registers an ActionListener with
-		// this timer, whose actionPerformed() method will be called
-		// each time the timer triggers. We define a helper method
-		// called tick() that actually does everything that should
-		// be done in a single timestep.
-		Timer timer = new Timer(INTERVAL, new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				tick();
-			}
-		});
-		timer.start(); // MAKE SURE TO START THE TIMER!
+        // The timer is an object which triggers an action periodically
+        // with the given INTERVAL. One registers an ActionListener with
+        // this timer, whose actionPerformed() method will be called
+        // each time the timer triggers. We define a helper method
+        // called tick() that actually does everything that should
+        // be done in a single timestep.
+        Timer timer = new Timer(INTERVAL, new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                tick();
+            }
+        });
+        timer.start(); // MAKE SURE TO START THE TIMER!
 
-		// Enable keyboard focus on the court area.
-		// When this component has the keyboard focus, key
-		// events will be handled by its key listener.
-		setFocusable(true);
+        // Enable keyboard focus on the court area.
+        // When this component has the keyboard focus, key
+        // events will be handled by its key listener.
+        setFocusable(true);
 
-		this.status = status;
+        this.status = status;
 
         this.addMouseMotionListener(this);
 
@@ -71,10 +72,10 @@ public class GameCourt extends JPanel implements MouseMotionListener {
     public void mouseDragged(MouseEvent e) {
     }
 
-	/**
-	 * (Re-)set the game to its initial state.
-	 */
-	public void reset() {
+    /**
+     * (Re-)set the game to its initial state.
+     */
+    public void reset() {
 
         paddle_left = new Rectangle(0, 0, COURT_WIDTH, COURT_HEIGHT);
 
@@ -82,57 +83,67 @@ public class GameCourt extends JPanel implements MouseMotionListener {
         paddle_right = new Rectangle(this.getWidth() - Rectangle.SIZE_X
                 , 0, COURT_WIDTH, COURT_HEIGHT); //Have to remove the width
         // of the Rectangle in order to keep it on the board.
-		snitch = new Circle(COURT_WIDTH, COURT_HEIGHT);
+        snitch = new Circle(COURT_WIDTH, COURT_HEIGHT);
 
-		playing = true;
-		status.setText("Running...");
+        playing = true;
+        status.setText("Running...");
 
-		// Make sure that this component has the keyboard focus
-		requestFocusInWindow();
+        // Make sure that this component has the keyboard focus
+        requestFocusInWindow();
 
         this.pongGameTimer = new PongTimer();
         this.pongGameTimer.startTimer();
     }
 
-	/**
-	 * This method is called every time the timer defined in the constructor
-	 * triggers.
-	 */
-	void tick() {
-		if (playing) {
+    /**
+     * This method is called every time the timer defined in the constructor
+     * triggers.
+     */
+    void tick() {
+        if (playing) {
             // advance the paddle_left and snitch in their
             // current direction.
             paddle_left.move();
             snitch.move();
 
-			// make the snitch bounce off walls...
-			snitch.bounce(snitch.hitWall());
-			// ...and the mushroom
+            // make the snitch bounce off walls...
+            // ...and the mushroom
+
+
+            // check for the game end conditions
+            if (this.snitch.pos_x < this.paddle_left.width / 2 || // if the
+                    // snitch is less than half the width of the left paddle
+                    this.snitch.pos_x + this.snitch.width > COURT_WIDTH -
+                            (this.paddle_right.width / 2)) {
+                this.endGame();
+            }
 
             snitch.bounce(snitch.hitObj(this.paddle_left));
             snitch.bounce(snitch.hitObj(this.paddle_right));
 
-			// check for the game end conditions
-            if (snitch.pos_x < 5) {
-                this.pongGameTimer.endTimer();
-                System.out.println(this.pongGameTimer.getElapsed());
-            }
+            snitch.bounce(snitch.hitWall());
+            // update the display
+            repaint();
+        }
+    }
 
-			// update the display
-			repaint();
-		}
-	}
+    public void endGame() {
+        this.pongGameTimer.endTimer();
+        this.snitch.v_x = 0;
+        this.snitch.v_y = 0;
+        status.setText("Game Over");
+    }
 
-	@Override
-	public void paintComponent(Graphics g) {
-		super.paintComponent(g);
+    @Override
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
         paddle_left.draw(g);
         paddle_right.draw(g);
-		snitch.draw(g);
-	}
+        snitch.draw(g);
+    }
 
-	@Override
-	public Dimension getPreferredSize() {
-		return new Dimension(COURT_WIDTH, COURT_HEIGHT);
-	}
+    @Override
+    public Dimension getPreferredSize() {
+        return new Dimension(COURT_WIDTH, COURT_HEIGHT);
+    }
 }

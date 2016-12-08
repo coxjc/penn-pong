@@ -172,14 +172,20 @@ public class GameObj {
      *
      * @return direction of impending wall, null if all clear.
      */
+
+    public boolean outOfBounds() {
+        return true;
+    }
+
     public Direction hitWall() {
-        if (pos_x + v_x < 0)
+        if (pos_x <= 0)
             return Direction.LEFT;
-        else if (pos_x + v_x > max_x)
+        else if (pos_x >= max_x) {
             return Direction.RIGHT;
-        if (pos_y + v_y < 0)
+        }
+        if (pos_y <= 0)
             return Direction.UP;
-        else if (pos_y + v_y > max_y)
+        else if (pos_y >= max_y)
             return Direction.DOWN;
         else return null;
     }
