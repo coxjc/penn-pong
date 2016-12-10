@@ -29,13 +29,20 @@ public class GameCourt extends JPanel implements MouseMotionListener {
     public static final int COURT_HEIGHT = 300;
     // Update interval for timer, in milliseconds
     public static final int INTERVAL = 35;
+    /**
+     * TODO
+     * Need to get this path shit figured out.
+     */
+    private static final String BG_IMG_LINK = "/Users/coxjc/Google " +
+            "Drive/Penn/SemI/CIS120/Java/hw09/imgs/pennBackground.jpg";
     public boolean playing = false; // whether the game is running
     // the state of the game logic
     private Rectangle paddle_left;
     private Rectangle paddle_right;
     private Circle snitch; // the Golden Snitch, bounces
+    //Image link for background img
     private JLabel status; // Current status text (i.e. Running...)
-    private PongTimer pongGameTimer;
+    private Image backgroundImage;
 
     public GameCourt(JLabel status) {
         // creates border around the court area, JComponent method
@@ -62,7 +69,8 @@ public class GameCourt extends JPanel implements MouseMotionListener {
         this.status = status;
 
         this.addMouseMotionListener(this);
-
+        this.backgroundImage = Toolkit.getDefaultToolkit().createImage
+                (BG_IMG_LINK);
     }
 
     public void mouseMoved(MouseEvent e) {
@@ -91,8 +99,6 @@ public class GameCourt extends JPanel implements MouseMotionListener {
         // Make sure that this component has the keyboard focus
         requestFocusInWindow();
 
-        this.pongGameTimer = new PongTimer();
-        this.pongGameTimer.startTimer();
     }
 
     /**
@@ -128,7 +134,6 @@ public class GameCourt extends JPanel implements MouseMotionListener {
     }
 
     public void endGame() {
-        this.pongGameTimer.endTimer();
         this.snitch.v_x = 0;
         this.snitch.v_y = 0;
         status.setText("Game Over");
@@ -137,6 +142,7 @@ public class GameCourt extends JPanel implements MouseMotionListener {
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
+        g.drawImage(this.backgroundImage, 0, 0, null);
         paddle_left.draw(g);
         paddle_right.draw(g);
         snitch.draw(g);
