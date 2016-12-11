@@ -21,7 +21,9 @@ public class Game implements Runnable {
 
     private final JPanel rootCardContainer = new JPanel(new CardLayout());
     private User user_one;
+    private JLabel userOneLabel;
     private User user_two;
+    private JLabel userTwoLabel;
     private int points_to_win;
 
     /*
@@ -54,7 +56,7 @@ public class Game implements Runnable {
         rootGameCourtPanel.add(court, BorderLayout.CENTER);
 
         // Reset button
-        final JPanel control_panel = new JPanel();
+        final JPanel control_panel = new JPanel(new GridLayout(3, 1));
         control_panel.setBackground(Color.BLUE);
         rootGameCourtPanel.add(control_panel, BorderLayout.NORTH);
 
@@ -64,6 +66,10 @@ public class Game implements Runnable {
         // method overridden. When the button is pressed,
         // actionPerformed() will be called.
         JButton startButton = new JButton("Start");
+        userOneLabel = new JLabel("");
+        userOneLabel.setForeground(Color.WHITE);
+        userTwoLabel = new JLabel("");
+        userTwoLabel.setForeground(Color.WHITE);
         startButton.setForeground(Color.RED);
         startButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -71,7 +77,9 @@ public class Game implements Runnable {
                 startButton.setEnabled(false);
             }
         });
+        control_panel.add(userOneLabel);
         control_panel.add(startButton);
+        control_panel.add(userTwoLabel);
         court.setCourtToInitialState();
 
         this.rootCardContainer.add(instructionsPage);
@@ -97,10 +105,13 @@ public class Game implements Runnable {
     public void createUserOne(String nn) {
         //USER ONE GETS 1st POSSESSION
         this.user_one = new User(nn, true);
+        this.userOneLabel.setText(nn + "\n" + 0);
+
     }
 
     public void createUserTwo(String nn) {
         this.user_two = new User(nn, false);
+        this.userTwoLabel.setText(nn + "\n" + 0);
     }
 
     public int getPoints_to_win() {
