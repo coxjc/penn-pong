@@ -46,12 +46,6 @@ public class Game implements Runnable {
         final GameLaunch gameLaunch = new GameLaunch(this);
         final InstructionsPage instructionsPage = new InstructionsPage(this);
 
-        // Status panel
-//		final JPanel status_panel = new JPanel();
-//		rootGameCourtPanel.add(status_panel, BorderLayout.SOUTH);
-//		final JLabel status = new JLabel("Running...");
-//		status_panel.add(status);
-        // Main playing area
         final GameCourt court = new GameCourt();
         rootGameCourtPanel.add(court, BorderLayout.CENTER);
 
