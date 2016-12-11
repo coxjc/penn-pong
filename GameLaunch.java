@@ -102,9 +102,9 @@ public class GameLaunch extends JPanel implements ActionListener {
 
     public void actionPerformed(ActionEvent e) {
         if ("PROCEED".equals(e.getActionCommand())) {
-            this.game.setUser_one_nickname(this.playerOneNicknameInputField
+            this.game.createUserOne(this.playerOneNicknameInputField
                     .getText().trim().toUpperCase());
-            this.game.setUser_two_nickname(this.playerTwoNicknameInputField
+            this.game.createUserTwo(this.playerTwoNicknameInputField
                     .getText().trim().toUpperCase());
             try {
                 this.game.setPoints_to_win((int) this.pointsSelector.getValue());

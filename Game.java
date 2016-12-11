@@ -20,8 +20,8 @@ import java.awt.event.ActionListener;
 public class Game implements Runnable {
 
     private final JPanel rootCardContainer = new JPanel(new CardLayout());
-    private String user_one_nickname;
-    private String user_two_nickname;
+    private User user_one;
+    private User user_two;
     private int points_to_win;
 
     /*
@@ -89,20 +89,13 @@ public class Game implements Runnable {
         tmp.next(this.rootCardContainer);
     }
 
-    public String getUser_one_nickname() {
-        return user_one_nickname;
+    public void createUserOne(String nn) {
+        //USER ONE GETS 1st POSSESSION
+        this.user_one = new User(nn, true);
     }
 
-    public void setUser_one_nickname(String nn) {
-        this.user_one_nickname = nn;
-    }
-
-    public String getUser_two_nickname() {
-        return user_two_nickname;
-    }
-
-    public void setUser_two_nickname(String nn) {
-        this.user_two_nickname = nn;
+    public void createUserTwo(String nn) {
+        this.user_two = new User(nn, false);
     }
 
     public int getPoints_to_win() {
