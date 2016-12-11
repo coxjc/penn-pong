@@ -15,11 +15,10 @@ import java.awt.event.MouseMotionListener;
 
 /**
  * GameCourt
- *
+ * <p>
  * This class holds the primary game logic for how different objects interact
  * with one another. Take time to understand how the timer interacts with the
  * different methods and how it repaints the GUI on every tick().
- *
  */
 @SuppressWarnings("serial")
 public class GameCourt extends JPanel implements MouseMotionListener {
@@ -43,6 +42,7 @@ public class GameCourt extends JPanel implements MouseMotionListener {
     //Image link for background img
     private JLabel status; // Current status text (i.e. Running...)
     private Image backgroundImage;
+    private Brick[][] bricks = new Brick[2][10];
 
     public GameCourt(JLabel status) {
         // creates border around the court area, JComponent method
@@ -71,10 +71,12 @@ public class GameCourt extends JPanel implements MouseMotionListener {
         this.addMouseMotionListener(this);
         this.backgroundImage = Toolkit.getDefaultToolkit().createImage
                 (BG_IMG_LINK);
+
     }
 
     public void mouseMoved(MouseEvent e) {
         this.paddle_left.setPos_y(e.getY());
+        System.out.println(e.getY());
     }
 
     public void mouseDragged(MouseEvent e) {
@@ -84,7 +86,15 @@ public class GameCourt extends JPanel implements MouseMotionListener {
      * (Re-)set the game to its initial state.
      */
     public void reset() {
-
+        for (int j = 0; j < bricks[0].length; j++) {
+            bricks[0][j] = new Brick(20 + (Brick.SIZE_X * j), 0, this
+                    .getWidth(), this.getHeight());
+        }
+        for (int j = 0; j < bricks[1].length; j++) {
+            bricks[1][j] = new Brick(20 + (Brick.SIZE_X * j), COURT_HEIGHT -
+                    Brick.SIZE_Y, this
+                    .getWidth(), this.getHeight());
+        }
         paddle_left = new Rectangle(0, 0, COURT_WIDTH, COURT_HEIGHT);
 
 
@@ -128,6 +138,14 @@ public class GameCourt extends JPanel implements MouseMotionListener {
             snitch.bounce(snitch.hitObj(this.paddle_right));
 
             snitch.bounce(snitch.hitWall());
+            for (int i = 0; i < this.bricks.length; i++) {
+                for (int j = 0; j < this.bricks[i].length; j++) {
+                    if (this.snitch.intersects(this.bricks[i][j])) {
+                        snitch.bounce(snitch.hitObj(this.bricks[i][j]));
+                        bricks[i][j].collide();
+                    }
+                }
+            }
             // update the display
             repaint();
         }
@@ -146,6 +164,9 @@ public class GameCourt extends JPanel implements MouseMotionListener {
         paddle_left.draw(g);
         paddle_right.draw(g);
         snitch.draw(g);
+        for (int i = 0; i < this.bricks.length; i++)
+            for (int j = 0; j < this.bricks[i].length; j++)
+                this.bricks[i][j].draw(g);
     }
 
     @Override

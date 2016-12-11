@@ -173,10 +173,6 @@ public class GameObj {
      * @return direction of impending wall, null if all clear.
      */
 
-    public boolean outOfBounds() {
-        return true;
-    }
-
     public Direction hitWall() {
         if (pos_x <= 0)
             return Direction.LEFT;
