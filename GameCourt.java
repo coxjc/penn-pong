@@ -45,7 +45,7 @@ public class GameCourt extends JPanel implements KeyListener {
 
     public GameCourt() {
         // creates border around the court area, JComponent method
-        setBorder(BorderFactory.createLineBorder(Color.GREEN));
+        setBorder(BorderFactory.createLineBorder(Color.WHITE));
 
         // The timer is an object which triggers an action periodically
         // with the given INTERVAL. One registers an ActionListener with
@@ -68,6 +68,8 @@ public class GameCourt extends JPanel implements KeyListener {
         this.backgroundImage = Toolkit.getDefaultToolkit().createImage
                 (BG_IMG_LINK);
         this.addKeyListener(this);
+
+        requestFocusInWindow();
     }
 
     public void keyPressed(KeyEvent e) {
@@ -102,22 +104,25 @@ public class GameCourt extends JPanel implements KeyListener {
     /**
      * (Re-)set the game to its initial state.
      */
-    public void reset() {
+    public void setCourtToInitialState() {
 
         paddle_left = new Rectangle(0, 0, COURT_WIDTH, COURT_HEIGHT);
-
 
         paddle_right = new Rectangle(this.getWidth() - Rectangle.SIZE_X
                 , 0, COURT_WIDTH, COURT_HEIGHT); //Have to remove the width
         // of the Rectangle in order to keep it on the board.
         snitch = new Circle(COURT_WIDTH, COURT_HEIGHT);
 
-        playing = true;
-//        status.setText("Running...");
-
         // Make sure that this component has the keyboard focus
         requestFocusInWindow();
+    }
 
+    public void startGame() {
+        this.playing = true;
+    }
+
+    public void stopGame() {
+        this.playing = false;
     }
 
     /**
@@ -130,12 +135,6 @@ public class GameCourt extends JPanel implements KeyListener {
             // current direction.
             paddle_left.move();
             snitch.move();
-
-            // make the snitch bounce off walls...
-            // ...and the mushroom
-
-
-            // check for the game end conditions
             if (this.snitch.pos_x < this.paddle_left.width / 2 || // if the
                     // snitch is less than half the width of the left paddle
                     this.snitch.pos_x + this.snitch.width > COURT_WIDTH -
@@ -147,9 +146,8 @@ public class GameCourt extends JPanel implements KeyListener {
             snitch.bounce(snitch.hitObj(this.paddle_right));
 
             snitch.bounce(snitch.hitWall());
-            // update the display
-            repaint();
         }
+        repaint();
     }
 
     public void endGame() {

@@ -39,6 +39,7 @@ public class Game implements Runnable {
         rootFrame.setLocation(300, 300);
 
         final JPanel rootGameCourtPanel = new JPanel();
+        rootGameCourtPanel.setBackground(Color.BLUE);
 
         final GameLaunch gameLaunch = new GameLaunch(this);
         final InstructionsPage instructionsPage = new InstructionsPage(this);
@@ -54,20 +55,24 @@ public class Game implements Runnable {
 
         // Reset button
         final JPanel control_panel = new JPanel();
+        control_panel.setBackground(Color.BLUE);
         rootGameCourtPanel.add(control_panel, BorderLayout.NORTH);
 
-        // Note here that when we add an action listener to the reset
+        // Note here that when we add an action listener to the setCourtToInitialState
         // button, we define it as an anonymous inner class that is
         // an instance of ActionListener with its actionPerformed()
         // method overridden. When the button is pressed,
         // actionPerformed() will be called.
-        final JButton reset = new JButton("Reset");
-        reset.addActionListener(new ActionListener() {
+        JButton startButton = new JButton("Start");
+        startButton.setForeground(Color.RED);
+        startButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                court.reset();
+                court.startGame();
+                startButton.setEnabled(false);
             }
         });
-        control_panel.add(reset);
+        control_panel.add(startButton);
+        court.setCourtToInitialState();
 
         this.rootCardContainer.add(instructionsPage);
         this.rootCardContainer.add(gameLaunch);
@@ -81,7 +86,7 @@ public class Game implements Runnable {
         rootFrame.setVisible(true);
 
         // Start game
-        court.reset();
+        court.setCourtToInitialState();
     }
 
     public void nextCard() {
