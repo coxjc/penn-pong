@@ -41,10 +41,9 @@ public class GameCourt extends JPanel implements MouseMotionListener {
     private Rectangle paddle_right;
     private Circle snitch; // the Golden Snitch, bounces
     //Image link for background img
-    private JLabel status; // Current status text (i.e. Running...)
     private Image backgroundImage;
 
-    public GameCourt(JLabel status) {
+    public GameCourt() {
         // creates border around the court area, JComponent method
         setBorder(BorderFactory.createLineBorder(Color.GREEN));
 
@@ -65,8 +64,6 @@ public class GameCourt extends JPanel implements MouseMotionListener {
         // When this component has the keyboard focus, key
         // events will be handled by its key listener.
         setFocusable(true);
-
-        this.status = status;
 
         this.addMouseMotionListener(this);
         this.backgroundImage = Toolkit.getDefaultToolkit().createImage
@@ -94,7 +91,7 @@ public class GameCourt extends JPanel implements MouseMotionListener {
         snitch = new Circle(COURT_WIDTH, COURT_HEIGHT);
 
         playing = true;
-        status.setText("Running...");
+//        status.setText("Running...");
 
         // Make sure that this component has the keyboard focus
         requestFocusInWindow();
@@ -136,7 +133,7 @@ public class GameCourt extends JPanel implements MouseMotionListener {
     public void endGame() {
         this.snitch.v_x = 0;
         this.snitch.v_y = 0;
-        status.setText("Game Over");
+//        status.setText("Game Over");
     }
 
     @Override
