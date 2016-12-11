@@ -9,8 +9,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 
 /**
@@ -22,7 +22,7 @@ import java.awt.event.MouseMotionListener;
  *
  */
 @SuppressWarnings("serial")
-public class GameCourt extends JPanel implements MouseMotionListener {
+public class GameCourt extends JPanel implements KeyListener {
 
     // Game constants
     public static final int COURT_WIDTH = 600;
@@ -65,16 +65,38 @@ public class GameCourt extends JPanel implements MouseMotionListener {
         // events will be handled by its key listener.
         setFocusable(true);
 
-        this.addMouseMotionListener(this);
         this.backgroundImage = Toolkit.getDefaultToolkit().createImage
                 (BG_IMG_LINK);
+        this.addKeyListener(this);
     }
 
-    public void mouseMoved(MouseEvent e) {
-        this.paddle_left.setPos_y(e.getY());
+    public void keyPressed(KeyEvent e) {
+        switch (e.getKeyChar()) {
+            case 'q':
+                this.paddle_left.setPos_y(this.paddle_left.pos_y - this
+                        .paddle_left.height / 2);
+                return;
+            case 'a':
+                this.paddle_left.setPos_y(this.paddle_left.pos_y + this
+                        .paddle_left.height / 2);
+                return;
+            case 'p':
+                this.paddle_right.setPos_y(this.paddle_right.pos_y - this
+                        .paddle_right.height / 2);
+                return;
+            case 'l':
+                this.paddle_right.setPos_y(this.paddle_right.pos_y + this
+                        .paddle_right.height / 2);
+                return;
+        }
     }
 
-    public void mouseDragged(MouseEvent e) {
+    public void keyTyped(KeyEvent e) {
+
+    }
+
+    public void keyReleased(KeyEvent e) {
+
     }
 
     /**
