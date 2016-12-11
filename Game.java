@@ -41,6 +41,7 @@ public class Game implements Runnable {
         final JPanel rootGameCourtPanel = new JPanel();
 
         final GameLaunch gameLaunch = new GameLaunch(this);
+        final InstructionsPage instructionsPage = new InstructionsPage(this);
 
         // Status panel
 //		final JPanel status_panel = new JPanel();
@@ -68,6 +69,7 @@ public class Game implements Runnable {
         });
         control_panel.add(reset);
 
+        this.rootCardContainer.add(instructionsPage);
         this.rootCardContainer.add(gameLaunch);
         this.rootCardContainer.add(rootGameCourtPanel);
         rootFrame.add(this.rootCardContainer);
