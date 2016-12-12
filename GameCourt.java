@@ -15,11 +15,10 @@ import java.awt.event.KeyListener;
 
 /**
  * GameCourt
- *
+ * <p>
  * This class holds the primary game logic for how different objects interact
  * with one another. Take time to understand how the timer interacts with the
  * different methods and how it repaints the GUI on every tick().
- *
  */
 @SuppressWarnings("serial")
 public class GameCourt extends JPanel implements KeyListener {
@@ -35,6 +34,7 @@ public class GameCourt extends JPanel implements KeyListener {
      */
     private static final String BG_IMG_LINK = "/Users/coxjc/Google " +
             "Drive/Penn/SemI/CIS120/Java/hw09/imgs/pennBackground.jpg";
+    private final Game game;
     public boolean playing = false; // whether the game is running
     // the state of the game logic
     private Rectangle paddle_left;
@@ -44,9 +44,11 @@ public class GameCourt extends JPanel implements KeyListener {
     private Image backgroundImage;
     private Brick[][] bricks = new Brick[2][10];
 
-    public GameCourt() {
+    public GameCourt(Game game) {
         // creates border around the court area, JComponent method
         setBorder(BorderFactory.createLineBorder(Color.WHITE));
+
+        this.game = game;
 
         // The timer is an object which triggers an action periodically
         // with the given INTERVAL. One registers an ActionListener with
@@ -127,6 +129,26 @@ public class GameCourt extends JPanel implements KeyListener {
         requestFocusInWindow();
     }
 
+    public void setCourtAfterPoint() {
+        this.playing = false;
+        snitch.setPos_x(300);
+        snitch.setPos_y(150);
+        for (int j = 0; j < bricks[0].length; j++) {
+            bricks[0][j] = new Brick(20 + (Brick.SIZE_X * j), 0, this
+                    .getWidth(), this.getHeight());
+        }
+        for (int j = 0; j < bricks[1].length; j++) {
+            bricks[1][j] = new Brick(20 + (Brick.SIZE_X * j), COURT_HEIGHT -
+                    Brick.SIZE_Y, this
+                    .getWidth(), this.getHeight());
+        }
+        try {
+            Thread.sleep(2000);
+        } catch (Throwable e) {
+        }
+        this.playing = true;
+    }
+
     public void startGame() {
         this.playing = true;
     }
@@ -145,27 +167,52 @@ public class GameCourt extends JPanel implements KeyListener {
             // current direction.
             paddle_left.move();
             snitch.move();
-            if (this.snitch.pos_x < this.paddle_left.width / 2 || // if the
-                    // snitch is less than half the width of the left paddle
-                    this.snitch.pos_x + this.snitch.width > COURT_WIDTH -
-                            (this.paddle_right.width / 2)) {
-                this.endGame();
+            if (this.snitch.pos_x < this.paddle_left.width / 2) {
+                this.game.incrUserOneScore();
+                this.setCourtAfterPoint();
+            } else if (this.snitch.pos_x + this.snitch.width > COURT_WIDTH -
+                    (this.paddle_right.width / 2)) {
+                this.game.incrUserTwoScore();
+                this.setCourtAfterPoint();
             }
 
-            snitch.bounce(snitch.hitObj(this.paddle_left));
-            snitch.bounce(snitch.hitObj(this.paddle_right));
+            Direction plDir = snitch.hitObj(this.paddle_left);
+            Direction prDir = snitch.hitObj(this.paddle_right);
+            if (plDir != null) {
+                this.game.user_one.setHasPossession(true); // user one hit
+                this.game.user_two.setHasPossession(false);
+                // the ball last
+                snitch.bounce(snitch.hitObj(this.paddle_left));
+            } else if (prDir != null) {
+                this.game.user_one.setHasPossession(false); // user two hit
+                this.game.user_two.setHasPossession(true);
+                snitch.bounce(snitch.hitObj(this.paddle_right));
 
-            snitch.bounce(snitch.hitWall());
+            } else {
+                snitch.bounce(snitch.hitWall());
+            }
+
             for (int i = 0; i < this.bricks.length; i++) {
                 for (int j = 0; j < this.bricks[i].length; j++) {
-                    if (this.snitch.intersects(this.bricks[i][j])) {
+                    if (this.snitch.willIntersect(this.bricks[i][j]) && !this
+                            .bricks[i][j].isImploded()) {
                         snitch.bounce(snitch.hitObj(this.bricks[i][j]));
                         bricks[i][j].collide();
+                        break;
+                    } else if (this.snitch.willIntersect(this.bricks[i][j]) && this
+                            .bricks[i][j].isImploded()) {
+                        if (this.game.user_one.isHasPossession()) {
+                            this.game.incrUserTwoScore();
+                            this.setCourtAfterPoint();
+                        } else if (this.game.user_two.isHasPossession()) {
+                            this.game.incrUserOneScore();
+                            this.setCourtAfterPoint();
+                        }
                     }
                 }
             }
             // update the display
-        }
+
         }
         repaint();
     }

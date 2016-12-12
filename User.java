@@ -29,6 +29,10 @@ public class User {
         this.score = score;
     }
 
+    public void incrScore() {
+        this.score++;
+    }
+
     public boolean isHasPossession() {
         return hasPossession;
     }

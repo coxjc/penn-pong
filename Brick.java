@@ -17,7 +17,7 @@ public class Brick extends ImplodingGameObj {
 
     @Override
     public void draw(Graphics g) {
-        g.setColor(Color.ORANGE);
+        g.setColor(Color.WHITE);
         if (!this.isImploded()) {
             g.fillRect(pos_x, pos_y, width, height);
         } else {

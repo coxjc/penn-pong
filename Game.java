@@ -20,9 +20,9 @@ import java.awt.event.ActionListener;
 public class Game implements Runnable {
 
     private final JPanel rootCardContainer = new JPanel(new CardLayout());
-    private User user_one;
+    public User user_one;
+    public User user_two;
     private JLabel userOneLabel;
-    private User user_two;
     private JLabel userTwoLabel;
     private int points_to_win;
 
@@ -46,7 +46,7 @@ public class Game implements Runnable {
         final GameLaunch gameLaunch = new GameLaunch(this);
         final InstructionsPage instructionsPage = new InstructionsPage(this);
 
-        final GameCourt court = new GameCourt();
+        final GameCourt court = new GameCourt(this);
         rootGameCourtPanel.add(court, BorderLayout.CENTER);
 
         // Reset button
@@ -108,11 +108,35 @@ public class Game implements Runnable {
         this.userTwoLabel.setText(nn + "\n" + 0);
     }
 
-    public int getPoints_to_win() {
-        return points_to_win;
+    //returns true if one of the users has reached the designated point value
+    public boolean hasWinner() {
+        return (this.user_one.getScore() >= this.points_to_win || this
+                .user_two.getScore() >= this.points_to_win);
+    }
+
+    //return the User obj of the winner
+    public User getWinner() {
+        if (this.user_one.getScore() >= this.points_to_win)
+            return this.user_one;
+        else if (this.user_two.getScore() >= this.points_to_win)
+            return this.user_two;
+        return null;
     }
 
     public void setPoints_to_win(int points_to_win) {
         this.points_to_win = points_to_win;
     }
+
+    public void incrUserOneScore() {
+        this.user_one.incrScore();
+        this.userOneLabel.setText(this.user_one.getNickname() + "\n" + this
+                .user_one.getScore());
+    }
+
+    public void incrUserTwoScore() {
+        this.user_two.incrScore();
+        this.userTwoLabel.setText(this.user_two.getNickname() + "\n" + this
+                .user_two.getScore());
+    }
+
 }
