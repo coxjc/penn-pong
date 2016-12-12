@@ -152,6 +152,11 @@ public class Game implements Runnable {
                                 .getWinner().getNickname(),
                         this.pongTimer.getElapsedMS() /
                                 this.getWinner().getScore());
+                final HighScoresPage highScoresPage = new HighScoresPage
+                        (HighScoreManager.getSortedHighScores(scoreReader),
+                                this.getWinner().getNickname());
+                this.rootCardContainer.add(highScoresPage);
+                this.nextCard();
             }
         }
     }

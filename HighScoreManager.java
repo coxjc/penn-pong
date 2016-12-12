@@ -7,6 +7,7 @@ import com.opencsv.CSVWriter;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 
 /**
  * Scores are stored in a basic .csv file..
@@ -50,19 +51,24 @@ public class HighScoreManager {
         String[] nextLine;
         String name;
         ArrayList<ScoreRecord> highScores = new ArrayList<>();
-        int score;
+        double score;
         String timestamp;
         try {
             while ((nextLine = reader.readNext()) != null) {
                 name = nextLine[0].trim();
-                score = Integer.valueOf(nextLine[1].trim());
+                score = Double.valueOf(nextLine[1].trim());
                 timestamp = nextLine[2].trim();
                 highScores.add(new ScoreRecord(name, score, timestamp));
             }
         } catch (Throwable e) {
             throw new IllegalArgumentException();
         }
-        Collections.sort(highScores, new ScoreRecordComparator());
+        Collections.sort(highScores, new Comparator<ScoreRecord>() {
+            @Override
+            public int compare(ScoreRecord o1, ScoreRecord o2) {
+                return (int) (o1.getScore() - o2.getScore());
+            }
+        });
         return highScores;
     }
 
