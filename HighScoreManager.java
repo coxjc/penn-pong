@@ -26,7 +26,7 @@ public class HighScoreManager {
     }
 
     public static boolean
-    addHighScore(CSVWriter writer, String name, double score) {
+    addHighScore(CSVWriter writer, String name, int score) {
         if (writer == null || name == null || score < 0)
             throw new IllegalArgumentException();
         String[] colsFinal = {name, String.valueOf(score),
@@ -51,12 +51,12 @@ public class HighScoreManager {
         String[] nextLine;
         String name;
         ArrayList<ScoreRecord> highScores = new ArrayList<>();
-        double score;
+        int score;
         String timestamp;
         try {
             while ((nextLine = reader.readNext()) != null) {
                 name = nextLine[0].trim();
-                score = Double.valueOf(nextLine[1].trim());
+                score = Integer.valueOf(nextLine[1].trim());
                 timestamp = nextLine[2].trim();
                 highScores.add(new ScoreRecord(name, score, timestamp));
             }
@@ -66,7 +66,7 @@ public class HighScoreManager {
         Collections.sort(highScores, new Comparator<ScoreRecord>() {
             @Override
             public int compare(ScoreRecord o1, ScoreRecord o2) {
-                return (int) (o1.getScore() - o2.getScore());
+                return o1.getScore() - o2.getScore();
             }
         });
         return highScores;

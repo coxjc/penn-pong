@@ -27,6 +27,7 @@ public class HighScoresPage extends JPanel {
                     .getTimestamp());
         }
         final JTable scoreTable = new JTable(scoreData, cols);
+        scoreTable.setEnabled(false);
         final JLabel exitLabel = new JLabel(winnerName + " WINS! Thanks for " +
                 "playing, Quaker!");
         exitLabel.setForeground(Color.RED);

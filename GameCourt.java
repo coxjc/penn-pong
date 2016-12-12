@@ -169,12 +169,13 @@ public class GameCourt extends JPanel implements KeyListener {
             if (this.snitch.pos_x < this.paddle_left.width / 2) {
                 this.game.incrUserOneScore();
                 this.setCourtAfterPoint();
+                this.snitch.bounce(snitch.hitWall());
             } else if (this.snitch.pos_x + this.snitch.width > COURT_WIDTH -
                     (this.paddle_right.width / 2)) {
                 this.game.incrUserTwoScore();
                 this.setCourtAfterPoint();
+                this.snitch.bounce(snitch.hitWall());
             }
-
             Direction plDir = snitch.hitObj(this.paddle_left);
             Direction prDir = snitch.hitObj(this.paddle_right);
             if (plDir != null) {

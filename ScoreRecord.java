@@ -3,10 +3,10 @@
  */
 public class ScoreRecord {
     private final String name;
-    private final double score;
+    private final int score;
     private final String timestamp;
 
-    public ScoreRecord(String n, double s, String ts) {
+    public ScoreRecord(String n, int s, String ts) {
         this.name = n;
         this.score = s;
         this.timestamp = ts;
@@ -16,7 +16,7 @@ public class ScoreRecord {
         return this.name;
     }
 
-    public double getScore() {
+    public int getScore() {
         return this.score;
     }
 
