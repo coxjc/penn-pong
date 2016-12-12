@@ -80,18 +80,22 @@ public class GameCourt extends JPanel implements KeyListener {
             case 'q':
                 this.paddle_left.setPos_y(this.paddle_left.pos_y - this
                         .paddle_left.height / 2);
+                this.paddle_left.clip();
                 return;
             case 'a':
                 this.paddle_left.setPos_y(this.paddle_left.pos_y + this
                         .paddle_left.height / 2);
+                this.paddle_left.clip();
                 return;
             case 'p':
                 this.paddle_right.setPos_y(this.paddle_right.pos_y - this
                         .paddle_right.height / 2);
+                this.paddle_right.clip();
                 return;
             case 'l':
                 this.paddle_right.setPos_y(this.paddle_right.pos_y + this
                         .paddle_right.height / 2);
+                this.paddle_right.clip();
                 return;
         }
     }
