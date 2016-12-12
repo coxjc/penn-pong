@@ -55,10 +55,15 @@ public class HighScoreManager {
         String timestamp;
         try {
             while ((nextLine = reader.readNext()) != null) {
-                name = nextLine[0].trim();
-                score = Integer.valueOf(nextLine[1].trim());
-                timestamp = nextLine[2].trim();
-                highScores.add(new ScoreRecord(name, score, timestamp));
+                try {
+                    name = nextLine[0].trim();
+                    score = Integer.valueOf(nextLine[1].trim());
+                    timestamp = nextLine[2].trim();
+                    highScores.add(new ScoreRecord(name, score, timestamp));
+                } catch (Throwable e) {
+                    //if the line is fucked up
+                    //just skip it
+                }
             }
         } catch (Throwable e) {
             throw new IllegalArgumentException();

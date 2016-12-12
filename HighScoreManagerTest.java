@@ -59,14 +59,29 @@ public class HighScoreManagerTest {
             HighScoreManager.addHighScore(writer, "USER3", 8);
             CSVReader reader = new CSVReader(new StringReader(stringWriter.toString()));
             //There should only be the USER3 record at this point
-            assertEquals(HighScoreManager.getSortedHighScores(reader).size(), 1);
+            assertEquals("Adding one basic (proper) score record should " +
+                    "return an AL<> of length 1..", HighScoreManager
+                    .getSortedHighScores(reader).size(), 1);
             //Add the test data described earlier to the writer
             stringWriter.append(testData);
             //Create StringReader from the StringWriter
             reader = new CSVReader(new StringReader(stringWriter.toString()));
             // There should be the original USER3 as well as the two
             // generated records
-            assertEquals(HighScoreManager.getSortedHighScores(reader).size(), 3);
+            assertEquals("Adding two additional basic (proper) score records" +
+                            " should return and AL<> of length 3..",
+                    HighScoreManager.getSortedHighScores(reader).size(), 3);
+            stringWriter.append('\n');
+            reader = new CSVReader(new StringReader(stringWriter.toString()));
+            assertEquals("Adding a newline to the end of the file should not" +
+                            " screw up everything..",
+                    HighScoreManager.getSortedHighScores(reader).size(), 3);
+            stringWriter.append("user4,7," + secondTs + 1);
+            reader = new CSVReader(new StringReader(stringWriter.toString()));
+            assertEquals("Adding a record after a newline should still " +
+                            "increment the count..",
+                    HighScoreManager.getSortedHighScores(reader).size(), 4);
+
         } catch (Throwable e) {
             fail(e.getMessage());
         }
