@@ -42,6 +42,7 @@ public class GameCourt extends JPanel implements KeyListener {
     private Circle snitch; // the Golden Snitch, bounces
     //Image link for background img
     private Image backgroundImage;
+    private Brick[][] bricks = new Brick[2][10];
 
     public GameCourt() {
         // creates border around the court area, JComponent method
@@ -105,6 +106,15 @@ public class GameCourt extends JPanel implements KeyListener {
      * (Re-)set the game to its initial state.
      */
     public void setCourtToInitialState() {
+        for (int j = 0; j < bricks[0].length; j++) {
+            bricks[0][j] = new Brick(20 + (Brick.SIZE_X * j), 0, this
+                    .getWidth(), this.getHeight());
+        }
+        for (int j = 0; j < bricks[1].length; j++) {
+            bricks[1][j] = new Brick(20 + (Brick.SIZE_X * j), COURT_HEIGHT -
+                    Brick.SIZE_Y, this
+                    .getWidth(), this.getHeight());
+        }
 
         paddle_left = new Rectangle(0, 0, COURT_WIDTH, COURT_HEIGHT);
 
@@ -146,6 +156,16 @@ public class GameCourt extends JPanel implements KeyListener {
             snitch.bounce(snitch.hitObj(this.paddle_right));
 
             snitch.bounce(snitch.hitWall());
+            for (int i = 0; i < this.bricks.length; i++) {
+                for (int j = 0; j < this.bricks[i].length; j++) {
+                    if (this.snitch.intersects(this.bricks[i][j])) {
+                        snitch.bounce(snitch.hitObj(this.bricks[i][j]));
+                        bricks[i][j].collide();
+                    }
+                }
+            }
+            // update the display
+        }
         }
         repaint();
     }
@@ -163,6 +183,9 @@ public class GameCourt extends JPanel implements KeyListener {
         paddle_left.draw(g);
         paddle_right.draw(g);
         snitch.draw(g);
+        for (int i = 0; i < this.bricks.length; i++)
+            for (int j = 0; j < this.bricks[i].length; j++)
+                this.bricks[i][j].draw(g);
     }
 
     @Override
