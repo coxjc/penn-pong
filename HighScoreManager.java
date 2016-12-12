@@ -5,7 +5,8 @@
 import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
 
-import java.util.TreeMap;
+import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * Scores are stored in a basic .csv file..
@@ -38,11 +39,17 @@ public class HighScoreManager {
         }
     }
 
-    public static TreeMap<String, ScoreRecord> getHighScores(CSVReader reader) {
+    /**
+     * returns scores recorded *SORTED*
+     *
+     * @param reader
+     * @return
+     */
+    public static ArrayList<ScoreRecord> getSortedHighScores(CSVReader reader) {
         if (reader == null) throw new IllegalArgumentException();
         String[] nextLine;
-        TreeMap<String, ScoreRecord> highScores = new TreeMap<>();
         String name;
+        ArrayList<ScoreRecord> highScores = new ArrayList<>();
         int score;
         String timestamp;
         try {
@@ -50,12 +57,12 @@ public class HighScoreManager {
                 name = nextLine[0].trim();
                 score = Integer.valueOf(nextLine[1].trim());
                 timestamp = nextLine[2].trim();
-                highScores.put(timestamp,
-                        new ScoreRecord(name, score, timestamp));
+                highScores.add(new ScoreRecord(name, score, timestamp));
             }
         } catch (Throwable e) {
             throw new IllegalArgumentException();
         }
+        Collections.sort(highScores, new ScoreRecordComparator());
         return highScores;
     }
 

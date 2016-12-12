@@ -129,10 +129,9 @@ public class GameCourt extends JPanel implements KeyListener {
         requestFocusInWindow();
     }
 
+    //Bricks are reset after each point
     public void setCourtAfterPoint() {
         this.playing = false;
-        snitch.setPos_x(300);
-        snitch.setPos_y(150);
         for (int j = 0; j < bricks[0].length; j++) {
             bricks[0][j] = new Brick(20 + (Brick.SIZE_X * j), 0, this
                     .getWidth(), this.getHeight());
@@ -141,10 +140,6 @@ public class GameCourt extends JPanel implements KeyListener {
             bricks[1][j] = new Brick(20 + (Brick.SIZE_X * j), COURT_HEIGHT -
                     Brick.SIZE_Y, this
                     .getWidth(), this.getHeight());
-        }
-        try {
-            Thread.sleep(2000);
-        } catch (Throwable e) {
         }
         this.playing = true;
     }
