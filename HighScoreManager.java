@@ -24,7 +24,7 @@ public class HighScoreManager {
     }
 
     public static boolean
-    addHighScore(CSVWriter writer, String name, int score) {
+    addHighScore(CSVWriter writer, String name, double score) {
         if (writer == null || name == null || score < 0)
             throw new IllegalArgumentException();
         String[] colsFinal = {name, String.valueOf(score),

@@ -9,10 +9,15 @@
  * Dec 2016
  */
 
+import com.opencsv.CSVReader;
+import com.opencsv.CSVWriter;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.FileReader;
+import java.io.FileWriter;
 
 /**
  * Game Main class that specifies the frame and widgets of the GUI
@@ -20,11 +25,16 @@ import java.awt.event.ActionListener;
 public class Game implements Runnable {
 
     private final JPanel rootCardContainer = new JPanel(new CardLayout());
+    private final String scorePath = "/Users/coxjc/Google " +
+            "Drive/Penn/SemI/CIS120/Java/hw09/imgs/scores.csv";
     public User user_one;
     public User user_two;
     private JLabel userOneLabel;
     private JLabel userTwoLabel;
     private int points_to_win;
+    private CSVReader scoreReader;
+    private CSVWriter scoreWriter;
+    private PongTimer pongTimer;
 
     /*
      * Main method run to start and run the game Initializes the GUI elements
@@ -36,6 +46,18 @@ public class Game implements Runnable {
     }
 
     public void run() {
+        try {
+            this.scoreReader = new CSVReader(new FileReader(this.scorePath));
+        } catch (Throwable e) {
+            this.scoreReader = null;
+        }
+        try {
+            this.scoreWriter = new CSVWriter(new FileWriter(this.scorePath,
+                    true));
+        } catch (Throwable e) {
+            this.scoreWriter = null;
+        }
+
         // Top-level frame in which every element resides
         final JFrame rootFrame = new JFrame("PennPong");
         rootFrame.setLocation(300, 300);
@@ -54,6 +76,8 @@ public class Game implements Runnable {
         control_panel.setBackground(Color.BLUE);
         rootGameCourtPanel.add(control_panel, BorderLayout.NORTH);
 
+        this.pongTimer = new PongTimer();
+
         // Note here that when we add an action listener to the setCourtToInitialState
         // button, we define it as an anonymous inner class that is
         // an instance of ActionListener with its actionPerformed()
@@ -69,6 +93,8 @@ public class Game implements Runnable {
             public void actionPerformed(ActionEvent e) {
                 court.startGame();
                 startButton.setEnabled(false);
+                ///START THE GAME TIMER this is important
+                pongTimer.startTimer();
             }
         });
         control_panel.add(userOneLabel);
@@ -109,9 +135,25 @@ public class Game implements Runnable {
     }
 
     //returns true if one of the users has reached the designated point value
-    public boolean hasWinner() {
-        return (this.user_one.getScore() >= this.points_to_win || this
-                .user_two.getScore() >= this.points_to_win);
+    //
+    public boolean checkForWinner() {
+        if (this.getWinner() != null) {
+            this.pongTimer.endTimer();
+            this.recordWinner();
+            return true;
+        }
+        return false;
+    }
+
+    private void recordWinner() {
+        if (this.getWinner() != null) {
+            if (this.scoreWriter != null) {
+                HighScoreManager.addHighScore(this.scoreWriter, this
+                                .getWinner().getNickname(),
+                        this.pongTimer.getElapsedMS() /
+                                this.getWinner().getScore());
+            }
+        }
     }
 
     //return the User obj of the winner

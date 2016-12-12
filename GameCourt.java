@@ -211,8 +211,10 @@ public class GameCourt extends JPanel implements KeyListener {
                     }
                 }
             }
-            // update the display
-
+            /**
+             * Check for win here
+             */
+            this.playing = !this.game.checkForWinner();
         }
         repaint();
     }
