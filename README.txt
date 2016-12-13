@@ -8,12 +8,11 @@ movement is discrete rather than smooth.
  bricks are reset after each point.
 3) The game is all about Penn! Go Quakers!
 
-You will need "opencsv" to compile and run PennPong. "opencsv" is
-available for download at: http://opencsv.sourceforge.net/.
 
 To compile:
-"javac -cp path_to_opencsv_jar *.java"
+javac -cp libs/opencsv-3.8.jar *.java
+
 To run:
-"java -cp path_to_opencsv_jar Game"
+java -cp libs/opencsv-3.8.jar: Game
 
 Enjoy!
