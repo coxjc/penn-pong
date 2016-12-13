@@ -4,8 +4,8 @@ import java.awt.*;
  * Created by coxjc on 12/11/16.
  */
 public class Brick extends ImplodingGameObj {
-    public static final int SIZE_X = 56;
-    public static final int SIZE_Y = 10;
+    public static final int SIZE_X = 20;
+    public static final int SIZE_Y = 20;
     public static final int INIT_VEL_X = 0;
     public static final int INIT_VEL_Y = 0;
     public static final int STRENGTH = 1;

@@ -25,8 +25,7 @@ import java.io.FileWriter;
 public class Game implements Runnable {
 
     private final JPanel rootCardContainer = new JPanel(new CardLayout());
-    private final String scorePath = "/Users/coxjc/Google " +
-            "Drive/Penn/SemI/CIS120/Java/hw09/imgs/scores.csv";
+    private final String scorePath = Config.highScoreFileName;
     public User user_one;
     public User user_two;
     private JLabel userOneLabel;
@@ -49,12 +48,14 @@ public class Game implements Runnable {
         try {
             this.scoreReader = new CSVReader(new FileReader(this.scorePath));
         } catch (Throwable e) {
+            System.out.println("Error fetching scores.");
             this.scoreReader = null;
         }
         try {
             this.scoreWriter = new CSVWriter(new FileWriter(this.scorePath,
                     true));
         } catch (Throwable e) {
+            System.out.println("Error fetching scores.");
             this.scoreWriter = null;
         }
 

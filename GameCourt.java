@@ -28,21 +28,16 @@ public class GameCourt extends JPanel implements KeyListener {
     public static final int COURT_HEIGHT = 300;
     // Update interval for timer, in milliseconds
     public static final int INTERVAL = 35;
-    /**
-     * TODO
-     * Need to get this path shit figured out.
-     */
-    private static final String BG_IMG_LINK = "/Users/coxjc/Google " +
-            "Drive/Penn/SemI/CIS120/Java/hw09/imgs/pennBackground.jpg";
+    private static final String BG_IMG_LINK =
+            Config.gameCourtBackgroundFileName;
     private final Game game;
     public boolean playing = false; // whether the game is running
-    // the state of the game logic
-    private Rectangle paddle_left;
-    private Rectangle paddle_right;
-    private Circle snitch; // the Golden Snitch, bounces
-    //Image link for background img
+    private Square paddle_left;
+    private Square paddle_right;
+    private Circle snitch;
     private Image backgroundImage;
-    private Brick[][] bricks = new Brick[2][10];
+    private Brick[][] bricks = new Brick[2][28];
+    private boolean lastHitWasPoint = false;
 
     public GameCourt(Game game) {
         // creates border around the court area, JComponent method
@@ -122,20 +117,20 @@ public class GameCourt extends JPanel implements KeyListener {
                     .getWidth(), this.getHeight());
         }
 
-        paddle_left = new Rectangle(0, 0, COURT_WIDTH, COURT_HEIGHT);
+        paddle_left = new Square(0, 0, COURT_WIDTH, COURT_HEIGHT);
 
-        paddle_right = new Rectangle(this.getWidth() - Rectangle.SIZE_X
+        paddle_right = new Square(this.getWidth() - Square.SIZE_X
                 , 0, COURT_WIDTH, COURT_HEIGHT); //Have to remove the width
-        // of the Rectangle in order to keep it on the board.
+        // of the Square in order to keep it on the board.
         snitch = new Circle(COURT_WIDTH, COURT_HEIGHT);
 
         // Make sure that this component has the keyboard focus
         requestFocusInWindow();
     }
 
-    //Bricks are reset after each point
     public void setCourtAfterPoint() {
         this.playing = false;
+        //Bricks are reset after each point
         for (int j = 0; j < bricks[0].length; j++) {
             bricks[0][j] = new Brick(20 + (Brick.SIZE_X * j), 0, this
                     .getWidth(), this.getHeight());
@@ -145,6 +140,10 @@ public class GameCourt extends JPanel implements KeyListener {
                     Brick.SIZE_Y, this
                     .getWidth(), this.getHeight());
         }
+        this.snitch.setPos_x(COURT_WIDTH / 2);
+        this.snitch.setPos_y(COURT_HEIGHT / 2);
+        this.snitch.v_x = -this.snitch.v_x; //flip the direction of the ball
+        // after each point (it should go to the other player)
         this.playing = true;
     }
 
@@ -165,17 +164,30 @@ public class GameCourt extends JPanel implements KeyListener {
             // advance the paddle_left and snitch in their
             // current direction.
             paddle_left.move();
+            paddle_right.move();
             snitch.move();
+
+            //if the ball went past user one's paddle
             if (this.snitch.pos_x < this.paddle_left.width / 2) {
-                this.game.incrUserOneScore();
-                this.setCourtAfterPoint();
+                //if it isn't a repeat of the last point
+                if (!this.lastHitWasPoint) {
+                    this.game.incrUserTwoScore();
+                    this.setCourtAfterPoint();
+                    this.lastHitWasPoint = true;
+                }
                 this.snitch.bounce(snitch.hitWall());
             } else if (this.snitch.pos_x + this.snitch.width > COURT_WIDTH -
                     (this.paddle_right.width / 2)) {
-                this.game.incrUserTwoScore();
-                this.setCourtAfterPoint();
+                if (!this.lastHitWasPoint) {
+                    this.game.incrUserOneScore();
+                    this.setCourtAfterPoint();
+                    this.lastHitWasPoint = true;
+                }
                 this.snitch.bounce(snitch.hitWall());
+            } else {
+                this.lastHitWasPoint = false;
             }
+
             Direction plDir = snitch.hitObj(this.paddle_left);
             Direction prDir = snitch.hitObj(this.paddle_right);
             if (plDir != null) {
@@ -194,19 +206,23 @@ public class GameCourt extends JPanel implements KeyListener {
 
             for (int i = 0; i < this.bricks.length; i++) {
                 for (int j = 0; j < this.bricks[i].length; j++) {
-                    if (this.snitch.willIntersect(this.bricks[i][j]) && !this
+                    if (this.snitch.intersects(this.bricks[i][j]) && !this
                             .bricks[i][j].isImploded()) {
                         snitch.bounce(snitch.hitObj(this.bricks[i][j]));
                         bricks[i][j].collide();
                         break;
-                    } else if (this.snitch.willIntersect(this.bricks[i][j]) && this
-                            .bricks[i][j].isImploded()) {
+                    } else if (this.snitch.intersects(this.bricks[i][j]) && this
+                            .bricks[i][j].isImploded() && !this.lastHitWasPoint) {
                         if (this.game.user_one.isHasPossession()) {
                             this.game.incrUserTwoScore();
                             this.setCourtAfterPoint();
+                            this.lastHitWasPoint = true;
+                            break;
                         } else if (this.game.user_two.isHasPossession()) {
                             this.game.incrUserOneScore();
                             this.setCourtAfterPoint();
+                            this.lastHitWasPoint = true;
+                            break;
                         }
                     }
                 }
@@ -217,12 +233,6 @@ public class GameCourt extends JPanel implements KeyListener {
             this.playing = !this.game.checkForWinner();
         }
         repaint();
-    }
-
-    public void endGame() {
-        this.snitch.v_x = 0;
-        this.snitch.v_y = 0;
-//        status.setText("Game Over");
     }
 
     @Override
