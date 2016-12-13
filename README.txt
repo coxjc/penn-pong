@@ -15,4 +15,6 @@ javac -cp libs/opencsv-3.8.jar *.java
 To run:
 java -cp libs/opencsv-3.8.jar: Game
 
+![Alt text](/.data/pennBackground.jpg?raw=true "PennPong")
+
 Enjoy!
