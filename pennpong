@@ -1,0 +1,3 @@
+#!/bin/bash
+javac -cp libs/opencsv-3.8.jar *.java
+java -cp libs/opencsv-3.8.jar: Game

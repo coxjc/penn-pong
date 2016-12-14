@@ -9,10 +9,9 @@ movement is discrete rather than smooth.
 3) The game is all about Penn! Go Quakers!
 
 
-To compile:
-javac -cp libs/opencsv-3.8.jar *.java
-
-To run:
-java -cp libs/opencsv-3.8.jar: Game
+To run the game: 
+1) Change into the root directory of the PennPong repository
+2) Click or run ./pennpong in terminal
+3) If you have issues click or running ./pennpong in terminal, try running "chmod +x ./pennpong" to mark the script as executable, then repeat
 
 Enjoy!
