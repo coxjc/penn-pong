@@ -84,7 +84,7 @@ public class Game implements Runnable {
         // an instance of ActionListener with its actionPerformed()
         // method overridden. When the button is pressed,
         // actionPerformed() will be called.
-        JButton startButton = new JButton("Start");
+        final JButton startButton = new JButton("Start");
         userOneLabel = new JLabel("");
         userOneLabel.setForeground(Color.WHITE);
         userTwoLabel = new JLabel("");
